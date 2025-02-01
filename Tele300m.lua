@@ -6,7 +6,10 @@ local ESPConfig = {
     },
     TextSize = 14,
     LineThickness = 1,
-    BoxThickness = 2
+    BoxThickness = 2,
+    TeleportSpeed = 1,
+    MaxTeleportDistance = 500,
+    TeleportDelay = 2.5
 }
 
 local ItemColors = {
@@ -21,10 +24,37 @@ local RunService = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
 
 local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
 local espItems = {}
+local noclipConnection = nil
 
+-- Hệ thống quản lý nhân vật
+local function getCurrentCharacter()
+    return player.Character or player.CharacterAdded:Wait()
+end
+
+local function getHumanoidRootPart(character)
+    return character:WaitForChild("HumanoidRootPart")
+end
+
+-- Cập nhật NoClip khi hồi sinh
+local function setupNoClip(character)
+    if noclipConnection then
+        noclipConnection:Disconnect()
+    end
+    noclipConnection = RunService.Stepped:Connect(function()
+        for _, v in pairs(character:GetChildren()) do
+            if v:IsA("BasePart") then
+                v.CanCollide = false
+            end
+        end
+    end)
+end
+
+-- Hệ thống ESP
 local function UpdateESP()
+    local character = getCurrentCharacter()
+    local humanoidRootPart = getHumanoidRootPart(character)
+    
     for item, elements in pairs(espItems) do
         local primaryPart = item:IsA("Model") and item.PrimaryPart or item
         if not primaryPart or not primaryPart.Parent then
@@ -35,7 +65,7 @@ local function UpdateESP()
             continue
         end
 
-        local distance = (character.HumanoidRootPart.Position - primaryPart.Position).Magnitude
+        local distance = (humanoidRootPart.Position - primaryPart.Position).Magnitude
         local screenPos = Camera:WorldToViewportPoint(primaryPart.Position)
         
         elements.line.From = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y)
@@ -63,7 +93,7 @@ local function AddESP(item)
             box = Drawing.new("Square"),
             text = Drawing.new("Text")
         }
-        
+
         local color = ItemColors[item.Name] or Color3.new(1, 1, 1)
         local elements = espItems[item]
         
@@ -80,6 +110,7 @@ local function AddESP(item)
     end
 end
 
+-- Hệ thống quét vật phẩm
 local function ScanWorld()
     for _, obj in ipairs(workspace:GetDescendants()) do
         if table.find(ESPConfig.Item.Names, obj.Name) then
@@ -103,23 +134,19 @@ workspace.DescendantRemoving:Connect(function(obj)
     end
 end)
 
-ScanWorld()
-RunService.Heartbeat:Connect(UpdateESP)
-
-local TeleportConfig = {
-    Speed = 210,
-    Enabled = true
-}
-
+-- Hệ thống Teleport
 local function getNearestItem()
+    local character = getCurrentCharacter()
+    local humanoidRootPart = getHumanoidRootPart(character)
+    
     local nearestItem = nil
     local nearestDistance = math.huge
 
     for _, item in pairs(workspace:GetDescendants()) do
         if table.find(ESPConfig.Item.Names, item.Name) and item:IsA("Model") then
             local itemPart = item:FindFirstChildWhichIsA("BasePart")
-            if itemPart then
-                local distance = (character.HumanoidRootPart.Position - itemPart.Position).Magnitude
+            if itemPart and itemPart.Parent then
+                local distance = (humanoidRootPart.Position - itemPart.Position).Magnitude
                 if distance < nearestDistance then
                     nearestDistance = distance
                     nearestItem = itemPart
@@ -127,56 +154,46 @@ local function getNearestItem()
             end
         end
     end
-
     return nearestItem
 end
 
-local function enableNoClip()
-    game:GetService("RunService").Stepped:Connect(function()
-        for _, v in pairs(character:GetChildren()) do
-            if v:IsA("BasePart") then
-                v.CanCollide = false
-            end
-        end
-    end)
-end
-enableNoClip()
-
 local function teleportToItem(targetItem)
-    while targetItem and targetItem.Parent do
-        local targetPosition = targetItem.Position + Vector3.new(0, 5, 0)
-        local direction = (targetPosition - character.HumanoidRootPart.Position).unit
-        local distance = (targetPosition - character.HumanoidRootPart.Position).Magnitude
-        
-        while distance > TeleportConfig.Speed do
-            character.HumanoidRootPart.CFrame = CFrame.new(character.HumanoidRootPart.Position + direction * TeleportConfig.Speed)
-            wait(0.5)
-            distance = (targetPosition - character.HumanoidRootPart.Position).Magnitude
+    local character = getCurrentCharacter()
+    local humanoidRootPart = getHumanoidRootPart(character)
+    
+    local startTime = tick()
+    while targetItem and targetItem.Parent and (tick() - startTime) < 10 do
+        if humanoidRootPart and targetItem then
+            local direction = (targetItem.Position - humanoidRootPart.Position).Unit
+            local distance = (targetItem.Position - humanoidRootPart.Position).Magnitude
+            local stepDistance = math.min(distance, ESPConfig.MaxTeleportDistance)
+            
+            local newPosition = humanoidRootPart.Position + (direction * stepDistance)
+            humanoidRootPart.CFrame = CFrame.new(newPosition)
+            
+            if distance <= 10 then
+                break
+            end
+            
+            task.wait(ESPConfig.TeleportDelay)
         end
-        
-        character.HumanoidRootPart.CFrame = CFrame.new(targetPosition)
-        wait(0.5)
     end
 end
 
-local function startTeleport()
-    while TeleportConfig.Enabled do
-        local item = getNearestItem()
-        if item then
-            print("Teleporting to:", item.Name, "at", item.Position)
-            teleportToItem(item)
-        else
-            print("Không tìm thấy item, tiếp tục quét...")
-        end
-        wait(0)
-    end
-end
-
-player.CharacterAdded:Connect(function(newCharacter)
-    character = newCharacter
-    humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    enableNoClip()
+-- Khởi động hệ thống
+player.CharacterAdded:Connect(function(character)
+    setupNoClip(character)
     ScanWorld()
 end)
 
-startTeleport()
+setupNoClip(getCurrentCharacter())
+ScanWorld()
+RunService.Heartbeat:Connect(UpdateESP)
+
+while true do
+    local item = getNearestItem()
+    if item then
+        teleportToItem(item)
+    end
+    task.wait(1)
+end
