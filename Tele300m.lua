@@ -8,7 +8,7 @@ local ESPConfig = {
     LineThickness = 1,
     BoxThickness = 2,
     TeleportSpeed = 1,
-    MaxTeleportDistance = 5,
+    MaxTeleportDistance = 3,
     TeleportDelay = 0
 }
 
