@@ -8,8 +8,8 @@ local ESPConfig = {
     LineThickness = 1,
     BoxThickness = 2,
     TeleportSpeed = 1,
-    MaxTeleportDistance = 500,
-    TeleportDelay = 2.5
+    MaxTeleportDistance = 15,
+    TeleportDelay = 0
 }
 
 local ItemColors = {
