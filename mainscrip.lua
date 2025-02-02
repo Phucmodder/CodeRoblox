@@ -5,8 +5,8 @@ local GuiService = game:GetService("GuiService")
 local CoreGui = game:GetService("CoreGui")
 
 -- 🔹 **Cấu hình link GitHub**
-local KeyStorageUrl = "https://raw.githubusercontent.com/Phucbright/CodeRoblox/refs/heads/main/Key.txt"  -- Thay USERNAME và REPO
-local Script1Url = "https://raw.githubusercontent.com/Phucbright/CodeRoblox/refs/heads/main/Tele300m.lua"
+local KeyStorageUrl = "https://raw.githubusercontent.com/Phucmodder/CodeRoblox/refs/heads/main/Key.txt"  -- Thay USERNAME và REPO
+local Script1Url = "https://raw.githubusercontent.com/Phucmodder/CodeRoblox/refs/heads/main/Tele300m.lua"
 local ThemeImageUrl = "https://tr.rbxcdn.com/180DAY-e1ce51abae5188805c3fee78ec7f4d08/768/432/Image/Webp/noFilter"  -- Thay bằng link ảnh theme của bạn
 
 -- 🔹 **Lưu Key**
