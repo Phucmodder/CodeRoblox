@@ -7,9 +7,9 @@ local ESPConfig = {
     TextSize = 14,
     LineThickness = 1,
     BoxThickness = 2,
-    TeleportSpeed = 1,
-    MaxTeleportDistance = 100,
-    TeleportDelay = 1
+    TeleportSpeed = 0.00000000001,
+    MaxTeleportDistance = 250,
+    TeleportDelay = 0
 }
 
 local ItemColors = {
@@ -76,7 +76,7 @@ local function UpdateESP()
         elements.box.Position = Vector2.new(screenPos.X - 20, screenPos.Y - 20)
         elements.box.Visible = true
 
-        elements.text.Text = string.format("%s%s\n%.1f studs", 
+        elements.text.Text = string.format("%s%s\n%.1f met", 
             ESPConfig.Item.Text, 
             item.Name, 
             distance
@@ -161,9 +161,6 @@ local function teleportToItem(targetItem)
     local character = getCurrentCharacter()
     local humanoidRootPart = getHumanoidRootPart(character)
     
-    -- Tạm thời gắn nhân vật lại để tránh bị ảnh hưởng bởi vật lý khi teleport
-    humanoidRootPart.Anchored = true
-    
     local startTime = tick()
     while targetItem and targetItem.Parent and (tick() - startTime) < 10 do
         if humanoidRootPart and targetItem then
@@ -171,21 +168,16 @@ local function teleportToItem(targetItem)
             local distance = (targetItem.Position - humanoidRootPart.Position).Magnitude
             local stepDistance = math.min(distance, ESPConfig.MaxTeleportDistance)
             
-            -- Di chuyển nhân vật từng bước nhỏ để tránh bị rollback
             local newPosition = humanoidRootPart.Position + (direction * stepDistance)
             humanoidRootPart.CFrame = CFrame.new(newPosition)
             
-            -- Kiểm tra và điều chỉnh vị trí nếu cần
-            if (humanoidRootPart.Position - targetItem.Position).Magnitude < 1 then
+            if distance <= 0 then
                 break
             end
             
             task.wait(ESPConfig.TeleportDelay)
         end
     end
-    
-    -- Hủy gắn sau khi teleport xong
-    humanoidRootPart.Anchored = false
 end
 
 -- Khởi động hệ thống
@@ -203,5 +195,5 @@ while true do
     if item then
         teleportToItem(item)
     end
-    task.wait(1)
+    task.wait(0.5)
 end
