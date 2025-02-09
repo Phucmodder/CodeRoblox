@@ -49,7 +49,7 @@ function Tween(Part)
 		_G.Tween:Cancel()
 	end
 	local HumanoidRootPart = Player.Character:WaitForChild("HumanoidRootPart")
-	_G.Tween = game:GetService("TweenService"):Create(HumanoidRootPart,TweenInfo.new((Part.Position-HumanoidRootPart.Position).magnitude/500,Enum.EasingStyle.Linear,Enum.EasingDirection.InOut),{CFrame = Part.CFrame})
+	_G.Tween = game:GetService("TweenService"):Create(HumanoidRootPart,TweenInfo.new((Part.Position-HumanoidRootPart.Position).magnitude/300,Enum.EasingStyle.Linear,Enum.EasingDirection.InOut),{CFrame = Part.CFrame})
 	_G.Tween:Play()
 	local flying = true
 	while game:GetService("RunService").Stepped:Wait() and flying and _G.Play do
@@ -58,7 +58,7 @@ function Tween(Part)
 		end
 		if (Part.Position-HumanoidRootPart.Position).magnitude < 500 then
 			_G.Tween:Cancel()
-			for i = 1 do
+			for i = 1,5 do
 				HumanoidRootPart.CFrame = Part.CFrame
 				wait()
 			end
@@ -107,7 +107,7 @@ function TableNearToFarChests()
 		return checkedchests
 	end
 	for i,v in pairs(workspace:GetDescendants()) do
-		if v.Name == "Chest1" or v.Name == "Chest2" or v.Name == "Chest3" then
+		if v.Name == "Chest1" or v.Name == "Chest2" or v.Name == "Chest3" or v.Name == "Chest" or v.Name == "Fruit" then
 			table.insert(chests,v)
 		end
 	end
