@@ -107,7 +107,7 @@ function TableNearToFarChests()
 		return checkedchests
 	end
 	for i,v in pairs(workspace:GetDescendants()) do
-		if v.Name == "Chest1" or v.Name == "Chest2" or v.Name == "Chest3" or v.Name == "Chest" or v.Name == "Fruit" then
+		if v.Name == "Chest" or v.Name == "Chest1" or v.Name == "Chest2" or v.Name == "Chest3" then
 			table.insert(chests,v)
 		end
 	end
