@@ -6,7 +6,7 @@ local CoreGui = game:GetService("CoreGui")
 
 -- 🔹 **Cấu hình link GitHub**
 local KeyStorageUrl = "https://raw.githubusercontent.com/Phucmodder/CodeRoblox/refs/heads/main/Key.txt"  -- Thay USERNAME và REPO
-local Script1Url = "https://raw.githubusercontent.com/Phucmodder/CodeRoblox/refs/heads/main/Esp.lua"
+local Script1Url = "https://raw.githubusercontent.com/Phucmodder/CodeRoblox/refs/heads/main/NoXuong.lua"
 local Script2Url = "https://raw.githubusercontent.com/Phucmodder/CodeRoblox/refs/heads/main/Chest.lua"
 local ThemeImageUrl = "https://raw.githubusercontent.com/Phucmodder/CodeRoblox/refs/heads/main/15413.jpg"  -- Thay bằng link ảnh theme của bạn
 
