@@ -22,7 +22,7 @@ _G.Play = false
 _G.CloseAllScript = false
 
 local ToggleAutoChest = Home.Toggle({
-	Text = "Auto Chest",
+	Text = " Auto Chest",
 	Callback = function(Value)
 		_G.Play = Value
 	end,
@@ -49,7 +49,7 @@ function Tween(Part)
 		_G.Tween:Cancel()
 	end
 	local HumanoidRootPart = Player.Character:WaitForChild("HumanoidRootPart")
-	_G.Tween = game:GetService("TweenService"):Create(HumanoidRootPart,TweenInfo.new((Part.Position-HumanoidRootPart.Position).magnitude/250,Enum.EasingStyle.Linear,Enum.EasingDirection.InOut),{CFrame = Part.CFrame})
+	_G.Tween = game:GetService("TweenService"):Create(HumanoidRootPart,TweenInfo.new((Part.Position-HumanoidRootPart.Position).magnitude/350,Enum.EasingStyle.Linear,Enum.EasingDirection.InOut),{CFrame = Part.CFrame})
 	_G.Tween:Play()
 	local flying = true
 	while game:GetService("RunService").Stepped:Wait() and flying and _G.Play do
@@ -58,7 +58,7 @@ function Tween(Part)
 		end
 		if (Part.Position-HumanoidRootPart.Position).magnitude < 1000 then
 			_G.Tween:Cancel()
-			for i = 0,5 do
+			for i = 1,5 do
 				HumanoidRootPart.CFrame = Part.CFrame
 				wait()
 			end
@@ -117,7 +117,7 @@ end
  
 repeat wait() until game:IsLoaded()
  
-while wait(0) do
+while wait(1) do
 	if _G.Play then
 		local chests,checkedchests = TableNearToFarChests()
 		for i,v in pairs(checkedchests) do
