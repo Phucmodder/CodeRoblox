@@ -56,7 +56,7 @@ function Tween(Part)
 		if _G.Play == false then
 			_G.Tween:Cancel()
 		end
-		if (Part.Position-HumanoidRootPart.Position).magnitude < 10000 then
+		if (Part.Position-HumanoidRootPart.Position).magnitude < 1000 then
 			_G.Tween:Cancel()
 			for i = 0,5 do
 				HumanoidRootPart.CFrame = Part.CFrame
