@@ -107,7 +107,7 @@ function TableNearToFarChests()
 		return checkedchests
 	end
 	for i,v in pairs(workspace:GetDescendants()) do
-		if v.Name == "Chest" or v.Name == "Chest1" or v.Name == "Chest2" or v.Name == "Chest3" then
+		if v.Name == "Rocket Fruit" or v.Name == "Spin Fruit" or v.Name == "Blade Fruit" or v.Name == "Spring Fruit" or v.Name == "Bomb Fruit" or v.Name == "Smoke Fruit" or v.Name == "Spike Fruit" or v.Name == "Flame Fruit" or v.Name == "Falcon Fruit" or v.Name == "Ice Fruit" or v.Name == "Sand Fruit" or v.Name == "Dark Fruit" or v.Name == "Diamond Fruit" or v.Name == "Light Fruit" or v.Name == "Rubber Fruit" or v.Name == "Barrier Fruit" or v.Name == "Ghost Fruit" or v.Name == "Magma Fruit" or v.Name == "Quake Fruit" or v.Name == "Buddha Fruit" or v.Name == "Love Fruit" or v.Name == "Spider Fruit" or v.Name == "Sound Fruit" or v.Name == "Phoenix Fruit" or v.Name == "Portal Fruit" or v.Name == "Rumble Fruit" or v.Name == "Pain Fruit" or v.Name == "Blizzard Fruit" or v.Name == "Gravity Fruit" or v.Name == "Mammoth Fruit" or v.Name == "T-Rex Fruit" or v.Name == "Dough Fruit" or v.Name == "Shadow Fruit" or v.Name == "Venom Fruit" or v.Name == "Control Fruit" or v.Name == "Gas Fruit" or v.Name == "Spirit Fruit" or v.Name == "Leopard Fruit" or v.Name == "Yeti Fruit" or v.Name == "Kitsune Fruit" or v.Name == "Dragon Fruit" or v.Name == "Dragon (East) Fruit" or v.Name == "Dragon (West) Fruit" or v.Name == "Chest" or v.Name == "Chest1" or v.Name == "Chest2" or v.Name == "Chest3" then
 			table.insert(chests,v)
 		end
 	end
