@@ -49,14 +49,14 @@ function Tween(Part)
 		_G.Tween:Cancel()
 	end
 	local HumanoidRootPart = Player.Character:WaitForChild("HumanoidRootPart")
-	_G.Tween = game:GetService("TweenService"):Create(HumanoidRootPart,TweenInfo.new((Part.Position-HumanoidRootPart.Position).magnitude/300,Enum.EasingStyle.Linear,Enum.EasingDirection.InOut),{CFrame = Part.CFrame})
+	_G.Tween = game:GetService("TweenService"):Create(HumanoidRootPart,TweenInfo.new((Part.Position-HumanoidRootPart.Position).magnitude/200,Enum.EasingStyle.Linear,Enum.EasingDirection.InOut),{CFrame = Part.CFrame})
 	_G.Tween:Play()
 	local flying = true
 	while game:GetService("RunService").Stepped:Wait() and flying and _G.Play do
 		if _G.Play == false then
 			_G.Tween:Cancel()
 		end
-		if (Part.Position-HumanoidRootPart.Position).magnitude < 1000 then
+		if (Part.Position-HumanoidRootPart.Position).magnitude < 500 then
 			_G.Tween:Cancel()
 			for i = 1,5 do
 				HumanoidRootPart.CFrame = Part.CFrame
