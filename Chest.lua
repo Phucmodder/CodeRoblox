@@ -1,19 +1,3 @@
-getgenv().Team = "Pirates"
-
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local function JoinTeam()
-    local args = {
-        [1] = getgenv().Team
-    }
-    ReplicatedStorage.Remotes.CommF_:InvokeServer("SetTeam", unpack(args))
-end
-
-if not Players.LocalPlayer.Team then
-    JoinTeam()
-end
-
 local Player = game.Players.LocalPlayer
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/VanThanhIOS/VanThanhLuxucu/refs/heads/main/main.txt"))()
