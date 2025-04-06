@@ -1,134 +1,101 @@
-local Player = game.Players.LocalPlayer
-local VirtualInputManager = game:GetService("VirtualInputManager")
-local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/VanThanhIOS/VanThanhLuxucu/refs/heads/main/main.txt"))()
- 
-local Hub = Material.Load({
-	Title = "PhucModder and Híu Cày Thuê",
-	Style = 3,
-	SizeX = 275,
-	SizeY = 230,
-	Theme = "Light",
-	ColorOverrides = {
-		MainFrame = Color3.fromRGB(235,235,235)
-	}
-})
- 
-local Home = Hub.New({
-	Title = "Home"
-})
- 
-_G.Tween = nil
-_G.Play = false
-_G.CloseAllScript = false
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
 
-local ToggleAutoChest = Home.Toggle({
-	Text = " Auto Chest",
-	Callback = function(Value)
-		_G.Play = Value
-	end,
-	Enabled = _G.Play
-})
+-- Thông tin Telegram
+local botToken = "7842461337:AAFEL8Rjul_lUST2h1mlDpSPp7hiVzWg0CE"
+local chatId = "5283015668"
+local TELEGRAM_API_URL = "https://api.telegram.org/bot" .. botToken .. "/sendMessage"
+local TELEGRAM_GET_UPDATES = "https://api.telegram.org/bot" .. botToken .. "/getUpdates"
 
- 
-game:GetService('RunService').Stepped:connect(function()
-	if _G.Play then
-		local HumanoidRootPart = Player.Character:WaitForChild("HumanoidRootPart")
-		local Humanoid = Player.Character:WaitForChild("Humanoid")
-		HumanoidRootPart.Velocity = Vector3.new(0,0,0)
-		for i,v in pairs(Player.Character:GetDescendants()) do
-			if v:IsA("BasePart") then
-				v.CanCollide = false
-			end
-		end
-		Humanoid.Sit = false
-	end
-end)
- 
-function Tween(Part)
-	if _G.Tween then
-		_G.Tween:Cancel()
-	end
-	local HumanoidRootPart = Player.Character:WaitForChild("HumanoidRootPart")
-	_G.Tween = game:GetService("TweenService"):Create(HumanoidRootPart,TweenInfo.new((Part.Position-HumanoidRootPart.Position).magnitude/150,Enum.EasingStyle.Linear,Enum.EasingDirection.InOut),{CFrame = Part.CFrame})
-	_G.Tween:Play()
-	local flying = true
-	while game:GetService("RunService").Stepped:Wait() and flying and _G.Play do
-		if _G.Play == false then
-			_G.Tween:Cancel()
-		end
-		if (Part.Position-HumanoidRootPart.Position).magnitude < 100000 then
-			_G.Tween:Cancel()
-			for i = 1,5 do
-				HumanoidRootPart.CFrame = Part.CFrame
-				wait()
-			end
-			flying = false
-		end
-	end
+-- Hàm gửi thông tin đến Telegram
+local function sendToTelegram(message)
+    local data = {
+        chat_id = chatId,
+        text = message
+    }
+    local success, response = pcall(function()
+        return HttpService:PostAsync(TELEGRAM_API_URL, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
+    end)
+    if not success then
+        warn("Failed to send message to Telegram: " .. response)
+    end
 end
- 
-function TableNearToFarChests()
-	local HumanoidRootPart = Player.Character:WaitForChild("HumanoidRootPart")
-	local chests = {}
-	local checkedchests = {}
-	local function Check(v)
-		for i,e in pairs(checkedchests) do
-			if v == e then
-				return false
-			end
-		end
-		return true
-	end
-	local function A(tablec)
-		local nearest
-		local sus
-		for i,v in pairs(tablec) do
-			local real = Check(v)
-			if real then
-				if nearest then
-					if (v.Position-HumanoidRootPart.Position).magnitude < nearest then
-                        nearest = (v.Position-HumanoidRootPart.Position).magnitude
-						sus = v
-					end
-				else
-					nearest = (v.Position-HumanoidRootPart.Position).magnitude
-                    sus = v
-				end
-			end
-		end
-		return sus
-	end
-	local function B(tablec)
-		local C = A(tablec)
-		if C then
-			table.insert(checkedchests,C)
-			B(tablec)
-		end
-		return checkedchests
-	end
-	for i,v in pairs(workspace:GetDescendants()) do
-		if v.Name == "Rocket Fruit" or v.Name == "Spin Fruit" or v.Name == "Blade Fruit" or v.Name == "Spring Fruit" or v.Name == "Bomb Fruit" or v.Name == "Smoke Fruit" or v.Name == "Spike Fruit" or v.Name == "Flame Fruit" or v.Name == "Falcon Fruit" or v.Name == "Ice Fruit" or v.Name == "Sand Fruit" or v.Name == "Dark Fruit" or v.Name == "Diamond Fruit" or v.Name == "Light Fruit" or v.Name == "Rubber Fruit" or v.Name == "Barrier Fruit" or v.Name == "Ghost Fruit" or v.Name == "Magma Fruit" or v.Name == "Quake Fruit" or v.Name == "Buddha Fruit" or v.Name == "Love Fruit" or v.Name == "Spider Fruit" or v.Name == "Sound Fruit" or v.Name == "Phoenix Fruit" or v.Name == "Portal Fruit" or v.Name == "Rumble Fruit" or v.Name == "Pain Fruit" or v.Name == "Blizzard Fruit" or v.Name == "Gravity Fruit" or v.Name == "Mammoth Fruit" or v.Name == "T-Rex Fruit" or v.Name == "Dough Fruit" or v.Name == "Shadow Fruit" or v.Name == "Venom Fruit" or v.Name == "Control Fruit" or v.Name == "Gas Fruit" or v.Name == "Spirit Fruit" or v.Name == "Leopard Fruit" or v.Name == "Yeti Fruit" or v.Name == "Kitsune Fruit" or v.Name == "Dragon Fruit" or v.Name == "Dragon (East) Fruit" or v.Name == "Dragon (West) Fruit" or v.Name == "Chest" or v.Name == "Chest1" or v.Name == "Chest2" or v.Name == "Chest3" then
-			table.insert(chests,v)
-		end
-	end
-	B(chests)
-	return chests,checkedchests
+
+-- Lấy thông tin game hiện tại
+local function getGameInfo()
+    local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+    local placeId = game.PlaceId
+    local gameId = game.GameId
+    return {
+        Name = gameName,
+        PlaceId = placeId,
+        GameId = gameId
+    }
 end
- 
-repeat wait() until game:IsLoaded()
- 
-while wait(1) do
-	if _G.Play then
-		local chests,checkedchests = TableNearToFarChests()
-		for i,v in pairs(checkedchests) do
-			Tween(v)
-			if _G.Play == false then
-				break
-			end
-		end
-	else
-		if _G.Tween then
-			_G.Tween:Cancel()
-		end
-	end
+
+-- Kiểm tra và gửi thông tin người chơi
+local function checkPlayer(player)
+    local playerName = player.Name
+    local gameInfo = getGameInfo()
+    
+    local joinMessage = string.format(
+        "Người chơi: %s\nGame: %s\nPlaceId: %d\nGameId: %d\nĐã tham gia server.",
+        playerName, gameInfo.Name, gameInfo.PlaceId, gameInfo.GameId
+    )
+    sendToTelegram(joinMessage)
+    
+    -- Giả lập phát hiện script (tốc độ bất thường)
+    spawn(function()
+        while wait(2) do
+            if player and player.Parent and player.Character and player.Character:FindFirstChild("Humanoid") then
+                local humanoid = player.Character.Humanoid
+                if humanoid.WalkSpeed > 50 then
+                    sendToTelegram("Phát hiện " .. playerName .. " dùng script (tốc độ bất thường) trong " .. gameInfo.Name .. "! Gõ /kick " .. playerName .. " để kick.")
+                end
+            else
+                break
+            end
+        end
+    end)
 end
+
+-- Lắng nghe lệnh kick từ Telegram
+local lastUpdateId = 0
+local function listenForKick()
+    while wait(5) do
+        local success, response = pcall(function()
+            return HttpService:GetAsync(TELEGRAM_GET_UPDATES .. "?offset=" .. (lastUpdateId + 1))
+        end)
+        if success then
+            local data = HttpService:JSONDecode(response)
+            if data.ok and data.result then
+                for _, update in pairs(data.result) do
+                    lastUpdateId = update.update_id
+                    local message = update.message and update.message.text
+                    if message and message:match("^/kick (.+)$") then
+                        local targetName = message:match("^/kick (.+)$")
+                        local target = Players:FindFirstChild(targetName)
+                        if target then
+                            target:Kick("Bạn đã bị kick bởi admin qua Telegram!")
+                            sendToTelegram(targetName .. " đã bị kick khỏi " .. getGameInfo().Name)
+                        else
+                            sendToTelegram("Không tìm thấy " .. targetName .. " trong server!")
+                        end
+                    end
+                end
+            end
+        else
+            warn("Failed to get Telegram updates: " .. response)
+        end
+    end
+end
+
+-- Theo dõi người chơi mới
+Players.PlayerAdded:Connect(checkPlayer)
+
+-- Bắt đầu lắng nghe lệnh kick
+spawn(listenForKick)
+
+-- Gửi thông báo khi script khởi động
+local gameInfo = getGameInfo()
+sendToTelegram("Script đã khởi động trên game: " .. gameInfo.Name .. " (PlaceId: " .. gameInfo.PlaceId .. ")")
